@@ -1,18 +1,37 @@
+import 'package:tempo_template/services/location.dart';
+import 'package:tempo_template/services/networking.dart';
+
+const apiKey = '65858563322e3c0b0b3ec781fccbcb2f';
+const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
+
 class WeatherModel {
-  String getWeatherIcon(int condition) {
-    if (condition < 300) {
+  Future<dynamic> getLocationWeather() async {
+    Location location = Location();
+    await location.getCurrentLocation();
+
+    NetworkHelper networkHelper = NetworkHelper(
+        '$openWeatherMapURL?lat=${location.latitude}&lon=${location.longitude}'
+            '&appid=$apiKey&units=metric');
+
+    var weatherData = await networkHelper.getData();
+    return weatherData;
+  }
+
+
+  String getWeatherIcon(int climatico) {
+    if (climatico < 300) {
       return '🌩';
-    } else if (condition < 400) {
+    } else if (climatico < 400) {
       return '🌧';
-    } else if (condition < 600) {
+    } else if (climatico < 600) {
       return '☔️';
-    } else if (condition < 700) {
+    } else if (climatico < 700) {
       return '☃️';
-    } else if (condition < 800) {
+    } else if (climatico < 800) {
       return '🌫';
-    } else if (condition == 800) {
+    } else if (climatico == 800) {
       return '☀️';
-    } else if (condition <= 804) {
+    } else if (climatico <= 804) {
       return '☁️';
     } else {
       return '🤷‍';

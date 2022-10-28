@@ -15,8 +15,8 @@ class _CityScreenState extends State<CityScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/city_background.jpg'),
-            fit: BoxFit.cover,
+            image: AssetImage('images/clima.jpg'), //Coloquei a imagem clima para decorar somente, pois as outras passadas pelo professor ainda estao em images!
+            fit: BoxFit.cover,                     // basta somente alterar o campo `image`
           ),
         ),
         constraints: const BoxConstraints.expand(),

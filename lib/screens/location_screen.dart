@@ -1,21 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:tempo_template/services/weather.dart';
 import 'package:tempo_template/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({Key? key}) : super(key: key);
+  final dynamic localWeatherData;
+  const LocationScreen({ required this.localWeatherData, Key? key}) : super(key: key);
 
   @override
-  State<LocationScreen> createState() => _LocationScreenState();
+State<LocationScreen> createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  late String NomeCidade;
+  late String Mensagem;
+  late String IconeClima;
+  late int Temperatura;
+
+  WeatherModel weather = WeatherModel();
+
+  void updateUI(dynamic weatherData) {
+    setState(() {
+      var condition = weatherData['weather'][0]['id'];
+      IconeClima = weather.getWeatherIcon(condition);
+      double temp = weatherData['main']['temp'];
+      Temperatura = temp.toInt();
+      Mensagem = weather.getMessage(Temperatura);
+      NomeCidade = weatherData['name'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateUI(widget.localWeatherData);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: const AssetImage('images/location_background.jpg'),
+            image: const AssetImage('images/clima.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
                 Colors.white.withOpacity(0.8), BlendMode.dstATop),
@@ -31,7 +57,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weather.getLocationWeather();
+                      updateUI(weatherData);
+                    },
                     child: const Icon(
                       Icons.near_me,
                       size: 50.0,
@@ -49,22 +78,22 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Row(
-                  children: const [
+                  children: [
                     Text(
-                      '32°',
+                      '$Temperatura°',
                       style: kTempTextStyle,
                     ),
                     Text(
-                      '☀️',
+                      '$IconeClima️',
                       style: kConditionTextStyle,
                     )
                   ],
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  'É tempo de 🍦 em Joinville!',
+                  '$Mensagem em $NomeCidade!',
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
